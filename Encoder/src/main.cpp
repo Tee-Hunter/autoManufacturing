@@ -1,3 +1,5 @@
+// Rotary encoder basic program and circuit
+
 #include <Arduino.h>
 
 volatile signed int temp, counter = 0; //This variable will increase or decrease depending on the rotation of encoder
