@@ -1,16 +1,16 @@
 // Rotary encoder basic program and circuit
 #include <Arduino.h>
 
-volatile signed int temp, counter = 0; //This variable will increase or decrease depending on the rotation of encoder
-float Angle = 0.0; // define the angle variable
-int Speed = 0;  // declare the speed variable
+volatile unsigned int temp, counter = 0; //This variable will increase or decrease depending on the rotation of encoder
+unsigned int Angle = 0; // define the angle variable
+unsigned int Speed = 0;  // declare the speed variable
 int resolution = 1000;
 
 //Calling Function  
 void ai0();
 void ai1();
 void rotationAngle (int PPR);
-void rotatoinSpeed (int NoP);
+void rotatoinSpeed (int PPR);
     
 void setup() {
   Serial.begin (9600);
@@ -30,12 +30,13 @@ void loop() {
   // Send the value of counter
   if( counter != temp ){
       Serial.print("Pulse : ");
-      Serial.println(counter);
-      temp = counter;
+      Serial.print(counter);
+      Serial.print("/s \t\t");
       rotationAngle (counter);
       rotatoinSpeed (counter);
   }
-  // delay(1000);
+  // check status
+  temp = counter;
 }
    
 void ai0() {
@@ -60,20 +61,20 @@ void ai1() {
   }
 }
 
-void rotationAngle (int NoP) {
+void rotationAngle (int PPR) {
   // decare the angle variable as global
   // calculate DPP form Encoder value
-  Angle = (NoP * 360.0) / resolution;
+  Angle = (resolution * 360) / PPR;
   // print out angle (DPP)
   Serial.print("Angle : ");
   Serial.print(Angle);
-  Serial.println("°");
+  Serial.print("° \t\t");
 }
 
-void rotatoinSpeed (int NoP) {
+void rotatoinSpeed (int PPR) {
   // declare the speed variable as global
   // calculate Speed form Encoder value
-  Speed = (NoP * 60) / resolution;
+  Speed = (PPR * 60) / resolution;
   // Print out the Speed
   Serial.print("Speed : ");
   Serial.print(Speed);

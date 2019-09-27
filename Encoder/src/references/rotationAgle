@@ -1,7 +1,7 @@
 
 
 #calculate rotation angle
-    DPP = NoP * 360 / PPR
+    DPP = P/R * 360 / PPR
         Degrees per Pulse (DPP) : How many degrees per one pulse rotation.
         Number of degrees in a circle : 360 degrees.
         Number of Pulses (NoP) : Encoder value

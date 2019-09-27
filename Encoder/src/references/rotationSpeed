@@ -1,7 +1,7 @@
 # calculate the rotation speed
 
-RPM = (NoP * 60) / PPR
+RPM = (PPR * 60) / R/P
 
 RPM : Row per Minute
-Nop : Encoder value
-PPR : Resolution
+PPR : Encoder value
+P/R : Resolution
