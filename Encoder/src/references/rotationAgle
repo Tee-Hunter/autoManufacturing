@@ -1,0 +1,13 @@
+
+
+#calculate rotation angle
+    Degrees per Pulse = Number of degrees in a circle/Number of encoder pulses per rotation
+        Degrees per Pulse (DPP) : How many degrees per one pulse rotation.
+        Number of degrees in a circle : 360 degrees.
+        Number of encoder pulses per rotation (PPR): pulse number.
+
+        e.g: For a 5000 line count incremental rotary encoder we divide 360 by 5000 to get
+             0.072 degrees of rotation per pulse.
+             
+
+             °°°°°°°°°°°°°

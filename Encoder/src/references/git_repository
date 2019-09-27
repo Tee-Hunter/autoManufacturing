@@ -1,0 +1,14 @@
+$git init
+
+$git add [file-name] or $git add . or $git add -A (for all files)
+
+$git commit -m "[commit message]"
+
+$git remote add origin [url]
+
+$git push -u origin master
+
+------------------------------------------------------------------------------
+
+Change your remote's URL
+$ git remote set-url origin https://github.com/USERNAME/REPOSITORY.git

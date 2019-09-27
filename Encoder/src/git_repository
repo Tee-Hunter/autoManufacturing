@@ -1,9 +1,0 @@
-$git init
-
-$git add [file-name] or $git add . or $git add -A (for all files)
-
-$git commit -m "[commit message]"
-
-$git remote add origin [url]
-
-$git push -u origin master
