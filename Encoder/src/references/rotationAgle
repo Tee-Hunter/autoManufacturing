@@ -4,8 +4,8 @@
     DPP = P/R * 360 / PPR
         Degrees per Pulse (DPP) : How many degrees per one pulse rotation.
         Number of degrees in a circle : 360 degrees.
-        Number of Pulses (NoP) : Encoder value
-        Pulse per rotation (PPR) : Resolution
+        Pulse per rotation (PPR) : Encoder value
+        P/R : Resolution
 
 
              °°°°°°°°°°°°°

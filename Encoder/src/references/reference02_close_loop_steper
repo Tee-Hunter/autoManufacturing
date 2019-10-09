@@ -1,0 +1,197 @@
+// This sketch is written by  MBcreates (www.YouTube.com/MBcreates)
+// this sketch is in the public domain and free to use in any way you see fit 
+
+
+/* 
+ the Rotary Encoder code part of this sketch was found on:
+   
+ https://github.com/jumejume1/Arduino/blob/master/ROTARY_ENCODER/ROTARY_ENCODER.ino
+
+ thanks jumejume1 for sharing.
+*/
+
+
+#define DIR   12     // DRV8825 DIR pin is connected to Arduino pin 12 
+#define STEP  11     // DRV8825 STEP pin is connected to Arduino pin 11   
+
+#define P1    14    // push button 1 is connected to Arduino pin A0
+#define P2    15    // push button 2 is connected to Arduino pin A1
+#define P3    16    // push button 3 is connected to Arduino pin A2
+#define P4    17    // push button 4 is connected to Arduino pin A3
+#define P5    18    // push button 5 is connected to Arduino pin A4
+#define P6    19    // push button 6 is connected to Arduino pin A5
+
+int DELAY = 380;   // delay between steps in microsenconds  
+int DISTANCE=0;   // Counter for steps
+
+int DEST = 0;       // variable to store selected DESTINATION
+int SOURCE =0;      // variable to store current POSITION
+int DIFF = 0;       // variable to store the diffrence between POSISTION and DESTINATION
+int DIFFplus=0;     // variable to store a value to check what the shortest direction to DESTINATION is
+int DIFFmin=0;      // variable to store a value to check what the shortest direction to DESTINATION is
+    
+int encoderA;     // variable to store the encoder value before a movement
+int encoderB;     // variable to store the encoder value after a movement
+int encoderD;     // the diffrence between encoderA and encoderB 
+int counter = 0;  //variable to store the encoder value  
+
+boolean GO = false;   // stepper ON or OFF
+boolean PRINT=false;    // variable used to print the encoderD value
+
+void setup() {
+
+ Serial.begin(9600);   // start serial montior
+
+ pinMode(DIR,OUTPUT);       // pin 12 is set to OUTPUT
+ pinMode(STEP,OUTPUT);      // pin 11 is set to OUTPUT
+
+ pinMode(P1,INPUT_PULLUP);  // Arduino pin A0 is set to INPUT_PULLUP
+ pinMode(P2,INPUT_PULLUP);  // Arduino pin A1 is set to INPUT_PULLUP
+ pinMode(P3,INPUT_PULLUP);  // Arduino pin A2 is set to INPUT_PULLUP
+ pinMode(P4,INPUT_PULLUP);  // Arduino pin A3 is set to INPUT_PULLUP
+ pinMode(P5,INPUT_PULLUP);  // Arduino pin A4 is set to INPUT_PULLUP
+ pinMode(P6,INPUT_PULLUP);  // Arduino pin A5 is set to INPUT_PULLUP
+  
+ // this rotary encoder sketch uses the interupt pins on the arduino. note every pin can be used for this purpose
+ // learn more here: https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
+
+ pinMode(2, INPUT_PULLUP); // internal pullup input pin 2 
+ pinMode(3, INPUT_PULLUP); // internal pullup input pin 3
+  
+ //Setting up interrupt
+ //A rising pulse from encodenren activated ai0(). AttachInterrupt 0 is DigitalPin nr 2 on moust Arduino.
+ attachInterrupt(0, ai0, RISING);
+   
+ //B rising pulse from encodenren activated ai1(). AttachInterrupt 1 is DigitalPin nr 3 on moust Arduino.
+ attachInterrupt(1, ai1, RISING);
+
+}
+
+void loop() {
+
+  //Serial.println(counter);
+
+/////////////////////////////// Selecting DESTINTATION by PUSH BUTTON  
+/*
+The test setup in the video uses a 1.8 degree stepper motor. The Stepper driver is set to full step. This makes for 200 steps for a full rotation.
+Six diffrent posistion make for 33,333 steps between posistions. I used vife times 33 steps and one time 35 steps to avoid decimal values 
+
+*/
+
+if(!digitalRead(P1))      // when button 1 is pushed, DESTINATION is set to 0
+  {
+    DEST=0;
+  }
+if(!digitalRead(P2))      // when button 2 is pushed, DESTINATION is set to 33
+  {
+    DEST=33;
+  }
+if(!digitalRead(P3))      // when button 3 is pushed, DESTINATION is set to 66
+  {
+    DEST=66;
+  }
+if(!digitalRead(P4))      // when button 4 is pushed, DESTINATION is set to 99
+  {
+    DEST=99;
+  }
+if(!digitalRead(P5))      // when button 5 is pushed, DESTINATION is set to 132
+  {
+    DEST=132;
+  }
+if(!digitalRead(P6))      // when button 6 is pushed, DESTINATION is set to 165
+  {
+    DEST=165;
+  }
+ 
+ 
+DIFF=100-abs(abs(SOURCE-DEST)-100);             // the diffrence between SOURCE and DESTINATION is callculated in a way the value is always positive
+
+//  the two calculations below check the fastest way around a circle
+//   learn more here: https://stackoverflow.com/questions/7428718/algorithm-or-formula-for-the-shortest-direction-of-travel-between-two-degrees-on
+
+DIFFplus=100-abs(abs((SOURCE+1)-DEST)-100);     // the diffrence between SOURCE+1 and DESTINATION is callculated in a way the value is always positive
+DIFFmin=100-abs(abs((SOURCE-1)-DEST)-100);      // the diffrence between SOURCE-1 and DESTINATION is callculated in a way the value is always positive
+
+         
+                                                                    
+if(DIFFplus>=DIFFmin)                 // rotaion dirrection is set 
+{
+  digitalWrite(DIR,LOW);
+ }
+   
+else
+  {
+  digitalWrite(DIR,HIGH);
+  }
+
+
+
+  
+if(DEST!=SOURCE)
+  {              // if there is a diffrence between DEST and SOURCE, GO is set to true
+  GO=true;
+  encoderA = counter;          // the encoder position before the movement start is stored encoder A
+  }
+
+  while (GO)                  // while there is a diffrence between DEST and SOURCE the motor steps
+ {
+  digitalWrite(STEP,HIGH);
+  delayMicroseconds(DELAY);                      
+  digitalWrite(STEP,LOW); 
+  delayMicroseconds(DELAY);
+  DISTANCE++;                 // DISTANCE increases with 1 after every step
+          
+ 
+   
+ if (DISTANCE==DIFF)        // when the DISTANCE is equal to DIFF, the 
+  {
+  GO=false;                 // GO is set to false
+  SOURCE=DEST;              // SOURCE is set to DEST (now both values are the same)
+  DISTANCE=0;               // the DISTANCE counter is reset to zero
+  PRINT=true;               // PRINT is set to true
+  
+  }
+}
+
+delay(50);              //wait until the setups is stoped completely
+encoderB = counter;     // the encoder position is stored in encoderB
+
+encoderD=32752+(1/2)-abs(abs(encoderA-encoderB)-32752+(1/2)); //  the diffrence between encoder A & B is calculated and stored in encoderD
+
+/* 
+ 
+the optical rotary encoder used in this setup can go from 0 to 65504 (clockwise) or from 0 to -65504 (counter clockwise). 
+the forumula above calculates always a postive value and also ensures that when the max encoder value is reached the encoderD value is still correct
+
+this encoder setup gives a value of 1200 for a full rotation of the stepper motor   
+
+*/
+
+if(PRINT)                         // the encoderD value is printed one time after each movement
+{
+  Serial.println(encoderD);     
+  PRINT=false;
+}
+
+
+}   // end of porgram
+
+ void ai0() {
+  // ai0 is activated if DigitalPin nr 2 is going from LOW to HIGH
+  // Check pin 3 to determine the direction
+  if(digitalRead(3)==LOW) {
+  counter++;
+  }else{
+  counter--;
+  }
+  }
+   
+  void ai1() {
+  // ai0 is activated if DigitalPin nr 3 is going from LOW to HIGH
+  // Check with pin 2 to determine the direction
+  if(digitalRead(2)==LOW) {
+  counter--;
+  }else{
+  counter++;
+  }
+  }
