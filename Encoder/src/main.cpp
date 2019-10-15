@@ -13,9 +13,7 @@ int STBY = 9;   // standby
 volatile int lastEncoded = 0;
 volatile long encoderValue = 0;
 
-// int angle = 0;
 int angularSpeed = 0;
-
 long lastencoderValue = 0;
 
 int lastMSB = 0;
@@ -53,16 +51,6 @@ void loop(){
     Serial.print(encoderValue);
     Serial.print("\t\t | \t\t");
 
-    //angle
-    // angle = encoderValue*360 / 1000;
-
-    // if (angle > 360) angle = 360;
-    // if (angle <= 0) angle = 0;
-
-    // Serial.print("angle: \t");
-    // Serial.print(angle);
-    // Serial.print("\t");
-
     // angular speed (rad/s)
     angularSpeed = 2*PI*encoderValue / 1000;
 
@@ -80,7 +68,6 @@ void loop(){
   digitalWrite(BIN1, HIGH);
   digitalWrite(BIN2, LOW);
   analogWrite(PWMB, angularSpeed);
-  //Serial.println(angularSpeed);
 
 }
 
