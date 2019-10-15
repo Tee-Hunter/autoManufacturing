@@ -5,9 +5,9 @@ int encoderPin1 = 2; // Black
 int encoderPin2 = 3; // White
 
 // motor
-int BIN1 = 8;      //PIN 21
-int BIN2 = 7;      //PIN 22
-int PWMB = A0;    //PIN 23
+int AIN1 = 8;      //PIN 21
+int AIN2 = 7;      //PIN 22
+int PWMA = 6;    //PIN 23
 int STBY = 9;   // standby
 
 volatile int lastEncoded = 0;
@@ -28,9 +28,9 @@ void setup() {
   pinMode(encoderPin2, INPUT_PULLUP);
 
   //motor output define
-  pinMode(BIN1, OUTPUT); 
-  pinMode(BIN2, OUTPUT); 
-  pinMode(PWMB, OUTPUT);
+  pinMode(AIN1, OUTPUT); 
+  pinMode(AIN2, OUTPUT); 
+  pinMode(PWMA, OUTPUT);
   pinMode(STBY, OUTPUT);
 
   digitalWrite(encoderPin1, HIGH); //turn pullup resistor on
@@ -65,9 +65,9 @@ void loop(){
   // motor control
   digitalWrite(STBY, HIGH);
 
-  digitalWrite(BIN1, HIGH);
-  digitalWrite(BIN2, LOW);
-  analogWrite(PWMB, angularSpeed);
+  digitalWrite(AIN1, HIGH);
+  digitalWrite(AIN2, LOW);
+  analogWrite(PWMA, angularSpeed);
 
 }
 
