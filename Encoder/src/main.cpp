@@ -19,7 +19,13 @@ long lastencoderValue = 0;
 int lastMSB = 0;
 int lastLSB = 0;
 
+int clockwiseSpeed = 0;
+int counterClockwiseSpeed = 0;
+
 void updateEncoder();
+void angular();
+void clockWise();
+void counterClockWise();
 
 void setup() {
   Serial.begin (9600);
@@ -51,24 +57,13 @@ void loop(){
     Serial.print(encoderValue);
     Serial.print("\t\t | \t\t");
 
-    // angular speed (rad/s)
-    angularSpeed = 2*PI*encoderValue / 1000;
+    angular();
 
-    if (angularSpeed > 255) angularSpeed = 255;
-    if (angularSpeed <= 0) angularSpeed = 0;
-
-    Serial.print("speed: \t");
-    Serial.println(angularSpeed);
+    if ( encoderValue >= 0 && encoderValue <= 40600) clockWise();
+    else if ( encoderValue <= 0 && encoderValue >= -40600) counterClockWise();
+    
   }
   lastencoderValue = encoderValue;
-  
-  // motor control
-  digitalWrite(STBY, HIGH);
-
-  digitalWrite(AIN1, HIGH);
-  digitalWrite(AIN2, LOW);
-  analogWrite(PWMA, angularSpeed);
-
 }
 
 
@@ -83,7 +78,39 @@ void updateEncoder(){
   if(sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000) encoderValue --;
 
   if (encoderValue > 40600) encoderValue = 40600;
-  if (encoderValue <= 0) encoderValue = 0;
+  if (encoderValue < -40600) encoderValue = -40600;
 
   lastEncoded = encoded; //store this value for next time
+}
+
+void angular() {
+  // angular speed (rad/s)
+    angularSpeed = 2*PI*encoderValue / 1000;
+
+    if (angularSpeed > 255 ) angularSpeed = 255;
+    if (angularSpeed <= -255) angularSpeed = -255;
+}
+
+// clockwise 
+void clockWise() {
+  clockwiseSpeed = angularSpeed;
+  Serial.print("clockwise speed: \t");
+  Serial.println(clockwiseSpeed);
+
+  digitalWrite(STBY, HIGH);
+  digitalWrite(AIN1, HIGH);
+  digitalWrite(AIN2, LOW);
+  analogWrite(PWMA, clockwiseSpeed);
+}
+
+//counterClockwise
+void counterClockWise() {
+  counterClockwiseSpeed = angularSpeed * -1;
+  Serial.print("counter clockwise speed: \t");
+  Serial.println(counterClockwiseSpeed);
+
+  digitalWrite(STBY, HIGH);
+  digitalWrite(AIN1, HIGH);
+  digitalWrite(AIN2, LOW);
+  analogWrite(PWMA, counterClockwiseSpeed);
 }
